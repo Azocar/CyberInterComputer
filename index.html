@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de Control de Inventario y Punto de Venta para Cyber Inter Computer.">
+    <title>Cyber Inter Computer - Control de Inventario y POS</title>
+
+    <!-- Favicon SVG -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS Estilos -->
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body class="dark-theme">
+    <div class="app-container compact-layout">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h2>Cyber Inter Computer</h2>
+                    <span>Control de Inventario y POS</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="status-badge">
+                    <span class="status-indicator active"></span>
+                    <span>Base de datos activa</span>
+                </div>
+                <div class="real-time-clock" id="system-clock">00:00:00</div>
+                <button class="btn btn-secondary" id="reset-sim-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                    </svg>
+                    Restablecer Datos
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content-compact">
+
+            <!-- Floating Toast Alerts Container -->
+            <div id="toast-container" class="toast-container"></div>
+
+            <!-- Colapsable: Teoría: Modelos de Inventarios -->
+            <div class="theory-toggle-panel glass-card" id="theory-toggle-btn">
+                <div class="theory-toggle-header">
+                    <div class="theory-title-group">
+                        <span class="theory-icon">📚</span>
+                        <div class="theory-heading-text">
+                            <h3>Teoría: Modelos de Inventarios</h3>
+                            <p>Conceptos operativos, modelos determinísticos y su aplicación al inventario web del Cyber
+                            </p>
+                        </div>
+                    </div>
+                    <div class="theory-arrow" id="theory-arrow">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenido Colapsable de la Teoría -->
+            <div class="theory-content-wrapper collapsed" id="theory-content">
+                <div class="theory-content-body glass-card">
+                    <div class="theory-grid">
+
+                        <!-- Definición -->
+                        <div class="theory-card">
+                            <div class="theory-card-header">
+                                <span class="theory-card-badge">Concepto Base</span>
+                                <h4>Definición de Inventario</h4>
+                            </div>
+                            <p>El inventario es la acumulación de materiales tangibles necesarios para asegurar el flujo
+                                operativo del negocio. En nuestro **Cyber Papelería**, el inventario garantiza que no se
+                                detenga el servicio de impresiones (con existencias de resmas de papel y tóners) ni la
+                                venta de papelería general.</p>
+                            <div class="theory-application">
+                                <strong>Aplicación Web:</strong> La tabla de <em>existencias</em> en pantalla muestra en
+                                tiempo real este concepto. Cada vez que se vende, el stock baja; cada vez que se compra,
+                                el stock sube y se recalcula el costo promedio ponderado.
+                            </div>
+                        </div>
+
+                        <!-- Modelos de Compra -->
+                        <div class="theory-card">
+                            <div class="theory-card-header">
+                                <span class="theory-card-badge purple">EOQ</span>
+                                <h4>Modelos de Compra</h4>
+                            </div>
+                            <p>Se aplican al adquirir productos listos para la venta a proveedores (ej. bolígrafos,
+                                carpetas o memorias USB):</p>
+                            <ul>
+                                <li><strong>Sin Escasez (EOQ Clásico)</strong>: Las compras ingresan justo a tiempo
+                                    cuando el inventario llega a cero. Es lo que usamos para productos clave como
+                                    **Resmas de Papel A4** para no rechazar clientes.</li>
+                                <li><strong>Con Escasez Diferida</strong>: Se permiten compras atrasadas cuando el
+                                    cliente acepta pagar y esperar. Se aplica en artículos costosos (ej. **Audífonos
+                                    Gamer**) reduciendo el almacenamiento.</li>
+                            </ul>
+                            <div class="theory-application">
+                                <strong>Aplicación Web:</strong> En el POS, si un producto tiene stock, se descuenta
+                                directamente (Compra sin Escasez). Si llega a cero, el sistema dispara una alerta visual
+                                de seguridad para evitar rupturas de stock.
+                            </div>
+                        </div>
+
+                        <!-- Modelos de Manufacturación -->
+                        <div class="theory-card">
+                            <div class="theory-card-header">
+                                <span class="theory-card-badge emerald">POQ</span>
+                                <h4>Modelos de Manufacturación</h4>
+                            </div>
+                            <p>Ocurre cuando el Cyber funciona como mini-productor de sus propios servicios:</p>
+                            <ul>
+                                <li><strong>Sin Escasez</strong>: Ensamblado a una tasa de producción $P$ superior a la
+                                    demanda $D$. Se aplica al armar los **Combos Escolares** en el mostrador mientras la
+                                    clientela los compra.</li>
+                                <li><strong>Con Escasez</strong>: Ocurre bajo pedido masivo (ej. anillado de **guías
+                                    universitarias**). Se acumulan solicitudes en cola (escasez) que se completan
+                                    progresivamente.</li>
+                            </ul>
+                            <div class="theory-application">
+                                <strong>Aplicación Web:</strong> Refleja situaciones donde las existencias suben
+                                gradualmente mediante entradas de ensamble interno y se venden al por menor de forma
+                                controlada.
+                            </div>
+                        </div>
+
+                        <!-- Gráfico Determinístico General -->
+                        <div class="theory-card graph-card-theory">
+                            <div class="theory-card-header">
+                                <span class="theory-card-badge cyan">Gráfico Sawtooth</span>
+                                <h4>Gráfico Determinístico General (Dientes de Sierra)</h4>
+                            </div>
+                            <div class="theory-graph-layout">
+                                <div class="theory-graph-text">
+                                    <p>Representa el nivel de stock en el tiempo. El inventario se abastece
+                                        instantáneamente a un nivel máximo (cuando llega el pedido). Luego, disminuye de
+                                        forma constante con una pendiente de debida a las ventas diarias.</p>
+                                    <p>Para evitar retrasos del proveedor, el pedido se emite cuando el stock alcanza el
+                                        <strong>Punto de Reorden (R)</strong>, calculado en base al <strong>Lead Time
+                                            (Lt)</strong> (tiempo de entrega del proveedor).</p>
+                                </div>
+                                <div class="theory-svg-container">
+                                    <svg viewBox="0 0 450 180" width="100%" height="100%">
+                                        <!-- Grid lines -->
+                                        <line x1="40" y1="20" x2="40" y2="150" stroke="rgba(255,255,255,0.06)"
+                                            stroke-width="1" />
+                                        <line x1="40" y1="150" x2="430" y2="150" stroke="rgba(255,255,255,0.06)"
+                                            stroke-width="1" />
+
+                                        <!-- Axes -->
+                                        <line x1="40" y1="15" x2="40" y2="160" stroke="#4b5563" stroke-width="1.5" />
+                                        <line x1="30" y1="150" x2="440" y2="150" stroke="#4b5563" stroke-width="1.5" />
+
+                                        <!-- Dotted references -->
+                                        <line x1="40" y1="35" x2="400" y2="35" stroke="rgba(255,255,255,0.12)"
+                                            stroke-width="1" stroke-dasharray="2 2" />
+                                        <line x1="40" y1="95" x2="400" y2="95" stroke="rgba(245, 158, 11, 0.2)"
+                                            stroke-width="1" stroke-dasharray="2 2" />
+
+                                        <!-- Sawtooth line -->
+                                        <path d="M40 35 L190 150 L190 35 L340 150 L340 35 L400 81" fill="none"
+                                            stroke="var(--color-primary)" stroke-width="2.5" />
+
+                                        <!-- Reorder Point Dot -->
+                                        <circle cx="115" cy="95" r="4.5" fill="var(--color-warning)" />
+                                        <line x1="115" y1="95" x2="115" y2="150" stroke="rgba(245,158,11,0.25)"
+                                            stroke-width="1" stroke-dasharray="2 2" />
+
+                                        <!-- Labels -->
+                                        <text x="12" y="39" fill="var(--text-muted)" font-size="9"
+                                            font-family="Outfit">Q (Lote)</text>
+                                        <text x="12" y="99" fill="var(--color-warning)" font-size="9"
+                                            font-family="Outfit">R (Mín)</text>
+                                        <text x="35" y="162" fill="var(--text-muted)" font-size="8"
+                                            font-family="Outfit">0</text>
+                                        <text x="410" y="165" fill="var(--text-muted)" font-size="9"
+                                            font-family="Outfit">Tiempo t</text>
+                                        <text x="10" y="12" fill="var(--text-muted)" font-size="9"
+                                            font-family="Outfit">Existencias</text>
+
+                                        <!-- Lead Time brace -->
+                                        <path d="M115 155 L190 155" fill="none" stroke="var(--color-warning)"
+                                            stroke-width="1" />
+                                        <line x1="115" y1="152" x2="115" y2="158" stroke="var(--color-warning)"
+                                            stroke-width="1" />
+                                        <line x1="190" y1="152" x2="190" y2="158" stroke="var(--color-warning)"
+                                            stroke-width="1" />
+                                        <text x="130" y="167" fill="var(--color-warning)" font-size="8"
+                                            font-weight="600" font-family="Outfit">Lt (Demora)</text>
+
+                                        <text x="85" y="65" fill="var(--color-secondary)" font-size="9"
+                                            font-family="Plus Jakarta Sans" font-weight="500">Consumo Diario (-D)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Integrantes -->
+                        <div class="theory-card">
+                            <div class="theory-card-header">
+                                <span class="theory-card-badge purple">IF02</span>
+                                <h4>Integrantes</h4>
+                            </div>
+                            <p style="margin-bottom: 0.5rem; font-weight: 600; color: var(--color-secondary);">Integrantes IF02:</p>
+                            <ul style="list-style-type: none; margin: 0.5rem 0 0 0; padding-left: 0; display: flex; flex-direction: column; gap: 0.4rem;">
+                                <li><strong>Gabriel Azócar</strong> <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: 0.25rem;">CI: 19.789.539</span></li>
+                                <li><strong>Nancy Rodriguez</strong> <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: 0.25rem;">CI: 12.664.288</span></li>
+                                <li><strong>Rodilis Zapata</strong> <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: 0.25rem;">CI: 19.630.763</span></li>
+                                <li><strong>Ramon Morao</strong> <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: 0.25rem;">CI: 30.545.105</span></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Summary Row -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+                        </svg>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Productos Registrados</h3>
+                        <p class="stat-number" id="stat-total-products">0</p>
+                        <span class="stat-subtext" id="stat-categories-count">Categorías</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon emerald">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Valor de Almacén</h3>
+                        <p class="stat-number" id="stat-total-value">$0.00</p>
+                        <span class="stat-subtext">Costo Promedio Ponderado</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon cyan">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                            <polyline points="17 6 23 6 23 12" />
+                        </svg>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Ventas Registradas</h3>
+                        <p class="stat-number" id="stat-total-transactions">0</p>
+                        <span class="stat-subtext" id="stat-sales-purchases-ratio">Total de Transacciones</span>
+                    </div>
+                </div>
+                <div class="stat-card" id="stat-alerts-card">
+                    <div class="stat-icon rose">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01" />
+                        </svg>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Bajo Stock / Reorden</h3>
+                        <p class="stat-number alert-count-num" id="stat-reorder-alerts">0</p>
+                        <span class="stat-subtext text-success" id="stat-alert-status">Existencias Óptimas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="content-grid-2-1">
+
+                <!-- Left: Catalog & Existencias -->
+                <div class="card glass-card">
+                    <div class="card-header-compact">
+                        <div class="card-header-title">
+                            <h2>Base de Datos de Existencias</h2>
+                            <p>Control del stock real, precios de adquisición y venta</p>
+                        </div>
+                        <button class="btn btn-primary" id="add-product-btn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            Nuevo Producto
+                        </button>
+                    </div>
+
+                    <!-- Search and Filters Bar -->
+                    <div class="filters-bar">
+                        <div class="search-box">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2" class="search-icon">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" id="search-input" placeholder="Buscar producto por nombre...">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filter-classification" class="form-control filter-select">
+                                <option value="All">Clasificación: Todos</option>
+                                <option value="Consumible">Consumibles de servicio</option>
+                                <option value="Venta Directa">Venta Directa</option>
+                            </select>
+                            <div class="btn-group-filters">
+                                <button class="btn btn-secondary btn-sm active" id="btn-filter-stock-all">Todos</button>
+                                <button class="btn btn-secondary btn-sm" id="btn-filter-stock-low">Bajo Stock</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="data-table" id="products-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Producto</th>
+                                    <th>Clasificación</th>
+                                    <th class="text-right">Stock</th>
+                                    <th class="text-right">Stock Mín</th>
+                                    <th class="text-right">Costo Promedio</th>
+                                    <th class="text-right">P. Venta</th>
+                                    <th class="text-center">Margen</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Dynamic rows from app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right: Operations Area -->
+                <div class="flex-column gap-4">
+
+                    <!-- POS / Quick Sales (Dynamic Cart) -->
+                    <div class="card glass-card pos-card">
+                        <div class="card-header-compact">
+                            <div class="card-header-title">
+                                <h2>Punto de Venta (POS)</h2>
+                                <p>Registro de ventas directas de múltiples artículos</p>
+                            </div>
+                            <span class="badge badge-emerald" id="pos-items-count">0 items</span>
+                        </div>
+                        <div class="pos-cart-container">
+                            <div class="pos-cart-list" id="pos-cart-list">
+                                <!-- Dynamic cart elements -->
+                                <div class="empty-cart-prompt">
+                                    <p>🛒 Carrito Vacío</p>
+                                    <span>Haz clic en "+ Venta" en la tabla para agregar productos.</span>
+                                </div>
+                            </div>
+
+                            <div class="pos-summary-section">
+                                <div class="pos-total-row">
+                                    <span>Total a Cobrar:</span>
+                                    <strong id="pos-cart-total">$0.00</strong>
+                                </div>
+                                <div class="pos-checkout-actions">
+                                    <select id="pos-payment-type" class="form-control">
+                                        <option value="Venta Directa (Efectivo)">Efectivo</option>
+                                        <option value="Venta Directa (Pago Móvil)">Pago Móvil</option>
+                                        <option value="Consumo Interno">Consumo Interno (Impresión)</option>
+                                    </select>
+                                    <button class="btn btn-rose" id="pos-clear-btn" title="Vaciar Carrito">
+                                        &times;
+                                    </button>
+                                    <button class="btn btn-primary" id="pos-checkout-btn" disabled>
+                                        Cobrar Venta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registrar Compra / Entrada (Inline Form) -->
+                    <div class="card glass-card">
+                        <div class="card-header-compact">
+                            <div class="card-header-title">
+                                <h2>Registrar Adquisición / Compra</h2>
+                                <p>Ingreso de stock y recalculo automático de costo promedio</p>
+                            </div>
+                        </div>
+                        <form id="entrada-form-inline" class="flex-column gap-3">
+                            <div class="form-group">
+                                <label for="ent-producto-id" class="input-label">Seleccionar Producto</label>
+                                <select id="ent-producto-id" class="form-control" required>
+                                    <!-- Dynamic product options -->
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label for="ent-cantidad" class="input-label">Cantidad</label>
+                                    <input type="number" id="ent-cantidad" class="form-control" value="10" min="1"
+                                        required>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="ent-costo" class="input-label">Costo Unitario ($)</label>
+                                    <input type="number" id="ent-costo" class="form-control" value="4.50" step="0.01"
+                                        min="0.01" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ent-proveedor" class="input-label">Proveedor</label>
+                                <input type="text" id="ent-proveedor" class="form-control"
+                                    value="Papelera Nacional S.A." placeholder="Proveedor">
+                            </div>
+                            <button type="submit" class="btn btn-emerald btn-block">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="17 11 12 6 7 11" />
+                                    <line x1="12" y1="18" x2="12" y2="6" />
+                                </svg>
+                                Confirmar Entrada de Mercancía
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Historial Log -->
+                    <div class="card glass-card scroll-card">
+                        <div class="card-header-compact">
+                            <div class="card-header-title">
+                                <h2>Historial de Movimientos</h2>
+                                <p>Registro cronológico de entradas y salidas</p>
+                            </div>
+                            <div class="btn-group-filters">
+                                <button class="btn btn-secondary btn-sm active" id="log-filter-all">Todos</button>
+                                <button class="btn btn-secondary btn-sm" id="log-filter-in">Entradas</button>
+                                <button class="btn btn-secondary btn-sm" id="log-filter-out">Salidas</button>
+                            </div>
+                        </div>
+                        <div class="history-list" id="transaction-history-list">
+                            <!-- Dynamic transactions from app.js -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modales -->
+
+    <!-- Modal: Nuevo / Editar Producto -->
+    <div class="modal-backdrop" id="modal-product">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3 id="modal-product-title">Registrar Nuevo Producto</h3>
+                <button class="close-btn" id="close-modal-product-btn">&times;</button>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="p-id" value="">
+                <div class="modal-body flex-column gap-3">
+                    <div class="form-group">
+                        <label for="p-nombre" class="input-label">Nombre del Producto</label>
+                        <input type="text" id="p-nombre" class="form-control" placeholder="Ej. Resma de Papel Bond A4"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="p-descripcion" class="input-label">Descripción</label>
+                        <input type="text" id="p-descripcion" class="form-control"
+                            placeholder="Ej. 75gr, 500 hojas para copiado">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="p-clasificacion" class="input-label">Clasificación</label>
+                            <select id="p-clasificacion" class="form-control">
+                                <option value="Consumible">Consumible de servicio</option>
+                                <option value="Venta Directa">Producto para venta directa</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="p-stock-min" class="input-label">Stock Mínimo (Alerta)</label>
+                            <input type="number" id="p-stock-min" class="form-control" value="5" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6" id="stock-inicial-field-group">
+                            <label for="p-stock-actual" class="input-label">Stock Inicial</label>
+                            <input type="number" id="p-stock-actual" class="form-control" value="15" min="0" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="p-precio-compra" class="input-label">Costo de Compra ($)</label>
+                            <input type="number" id="p-precio-compra" class="form-control" value="4.50" step="0.01"
+                                min="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="p-precio-venta" class="input-label">Precio de Venta ($)</label>
+                        <input type="number" id="p-precio-venta" class="form-control" value="6.00" step="0.01"
+                            min="0.01" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-product-btn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="save-product-submit-btn">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS Aplicación -->
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+  <!-- Background Stylized Stacked Layers -->
+  <path d="M16 2L4 8l12 6 12-6-12-6z" fill="url(#grad)" />
+  <path d="M4 12v6l12 6 12-6v-6l-12 6-12-6z" fill="url(#grad)" opacity="0.8" />
+  <path d="M4 20v6l12 6 12-6v-6l-12 6-12-6z" fill="url(#grad)" opacity="0.6" />
+</svg>
